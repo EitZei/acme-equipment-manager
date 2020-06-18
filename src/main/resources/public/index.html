@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+    <title>ACME Equipment manager</title>
+
+    <script src="application.js" type="text/javascript"></script>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body onload="startApplication()">
+<h1>ACME Equipment manager</h1>
+
+<button onclick="clearDb()">Clear DB</button>
+<button onclick="generateTestData()">Generate test data</button>
+<button onclick="addItem()">Add item</button>
+
+<form id="equipmentForm" onsubmit="event.preventDefault(); saveItem()" style="display: none">
+    <table>
+        <tr>
+            <th>Address</th>
+            <td><input id="address" name="address"></td>
+        </tr>
+        <tr>
+            <th>Contract start</th>
+            <td><input id="contractStartTime" name="contractStartTime" type="date"></td>
+        </tr>
+        <tr>
+            <th>Contract end</th>
+            <td><input id="contractEndTime" name="contractEndTime" type="date"></td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                <select id="status" name="status">
+                    <option value="RUNNING">RUNNING</option>
+                    <option value="STOPPED">STOPPED</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td>
+                <button type="submit">Save equipment</button>
+            </td>
+        </tr>
+        <tr hidden id="error">
+            <th>Error</th>
+            <td id="errorMessage">
+
+            </td>
+        </tr>
+    </table>
+</form>
+
+<table>
+    <thead>
+    <th>ID</th>
+    <th>Address</th>
+    <th>Contract start</th>
+    <th>Contract End</th>
+    <th>Contract Status</th>
+    </thead>
+    <tbody id="equipments"></tbody>
+</table>
+</body>
+</html>

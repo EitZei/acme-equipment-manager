@@ -1,0 +1,11 @@
+html {
+    font-family: system-ui, sans-serif;
+}
+
+td, th {
+    padding: 0.25em 0.5em;
+}
+
+#error {
+    color: red;
+}
