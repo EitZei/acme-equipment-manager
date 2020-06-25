@@ -3,6 +3,7 @@ package com.acme.controller;
 import com.acme.model.Equipment;
 import com.acme.model.data.EquipmentData;
 import com.acme.repository.IEquipmentRepository;
+import com.acme.repository.NonUniqueItemException;
 import com.google.common.collect.Maps;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -31,9 +32,19 @@ public class TestEquipmentRepository implements IEquipmentRepository {
     public Single<Equipment> create(EquipmentData data) {
         Equipment equipment = Equipment.fromData(data);
 
+        if (!isUnique(equipment)) {
+            return Single.error(new NonUniqueItemException("Item address is not unique!"));
+        }
+
         this.store.put(equipment.getId(), equipment);
 
         return Single.just(equipment);
+    }
+
+    private boolean isUnique(Equipment equipment) {
+        return this.store.values()
+                .stream()
+                .noneMatch(inStore -> inStore.getAddress().equals(equipment.getAddress()));
     }
 
     @Override

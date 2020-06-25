@@ -6,8 +6,10 @@ import com.acme.model.data.EquipmentData;
 import com.acme.repository.IEquipmentRepository;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,10 +70,11 @@ public class EquipmentControllerTest {
         try {
             addEquipment(data);
             Assertions.fail("Trying to add same data twice should fail uniqueness.");
+        } catch (HttpClientResponseException e) {
+            Assertions.assertEquals(HttpStatus.CONFLICT, e.getStatus());
         } catch (Exception e) {
-            Assertions.fail("Should fail with XXX.");
+            Assertions.fail("Should fail with 409");
         }
-
     }
 
     private ListResponse<Equipment> getEquipmentList() {
