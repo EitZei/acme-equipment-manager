@@ -1,7 +1,7 @@
 FROM maven:3-openjdk-14
 COPY src src
 COPY pom.xml pom.xml
-RUN mvn package -DskipTests=true
+RUN mvn package
 
 FROM openjdk:14-alpine
 COPY --from=0 target/equipmentmanager-*.jar equipmentmanager.jar

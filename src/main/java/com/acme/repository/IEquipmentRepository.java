@@ -1,6 +1,7 @@
 package com.acme.repository;
 
 import com.acme.model.Equipment;
+import com.acme.model.data.EquipmentData;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -12,7 +13,7 @@ public interface IEquipmentRepository {
 
     public Maybe<Equipment> get(UUID id);
 
-    public Single<Equipment> create(Equipment equipment);
+    public Single<Equipment> create(EquipmentData equipment);
 
     public Single<Long> deleteAll();
 

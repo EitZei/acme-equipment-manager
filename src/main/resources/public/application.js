@@ -8,8 +8,17 @@ function startApplication() {
     loadEquipment();
 }
 
+function toggleOverlay() {
+    var overlay = document.getElementById("overlay");
+    overlay.style.display = overlay.style.display === "block" ? "none" : "block";
+}
+
 function loadEquipment() {
-    fetch('/api/equipment')
+    var itemsToShow = document.getElementById("itemsToShow");
+
+    toggleOverlay();
+
+    fetch('/api/equipment?limit=' + itemsToShow.value)
         .then(response => response.json())
         .then(data => {
             var container = document.getElementById("equipments");
@@ -18,49 +27,62 @@ function loadEquipment() {
               container.removeChild(container.firstChild);
             }
 
-            data.data.forEach(item => {
-                var row = document.createElement("tr");
+            if (data.data) {
+                data.data.forEach(item => {
+                    var row = document.createElement("tr");
 
-                var idCol = document.createElement("td");
-                idCol.innerText = item.id;
-                row.appendChild(idCol);
+                    var idCol = document.createElement("td");
+                    idCol.innerText = item.id;
+                    row.appendChild(idCol);
 
-                var addressCol = document.createElement("td");
-                addressCol.innerText = item.address;
-                row.appendChild(addressCol);
+                    var addressCol = document.createElement("td");
+                    addressCol.innerText = item.address;
+                    row.appendChild(addressCol);
 
-                var contractStartCol = document.createElement("td");
-                contractStartCol.innerText = new Date(item.contractStartTime).toUTCString()
-                row.appendChild(contractStartCol);
+                    var contractStartCol = document.createElement("td");
+                    contractStartCol.innerText = new Date(item.contractStartTime).toUTCString()
+                    row.appendChild(contractStartCol);
 
-                var contractEndCol = document.createElement("td");
-                contractEndCol.innerText = new Date(item.contractEndTime).toUTCString()
-                row.appendChild(contractEndCol);
+                    var contractEndCol = document.createElement("td");
+                    contractEndCol.innerText = new Date(item.contractEndTime).toUTCString()
+                    row.appendChild(contractEndCol);
 
-                var statusCol = document.createElement("td");
-                statusCol.innerText = item.status
-                row.appendChild(statusCol);
+                    var statusCol = document.createElement("td");
+                    statusCol.innerText = item.status
+                    row.appendChild(statusCol);
 
-                container.appendChild(row);
-            });
-        });
+                    container.appendChild(row);
+                });
+            }
+        })
+        .then(() => toggleOverlay());
+}
+
+function itemsToShowChanged() {
+    loadEquipment();
 }
 
 function clearDb() {
+    toggleOverlay();
+
     if (confirm("Are you sure that you want to clear the DB?")) {
         fetch("/api/equipment", { method: "DELETE" })
             .then(() => loadEquipment())
+            .then(() => toggleOverlay());
     }
 }
 
 function generateTestData() {
+    toggleOverlay();
+
     fetch("/api/equipment/generate", { method: "POST" })
         .then(() => loadEquipment())
+        .then(() => toggleOverlay());
 }
 
 function addItem() {
-    var form = document.getElementById("equipmentForm");
-    form.style.display = "block";
+    var formContainer = document.getElementById("equipmentFormContainer");
+    formContainer.style.display = "block";
 }
 
 function parseDate(value) {
@@ -72,7 +94,11 @@ function parseDate(value) {
 }
 
 function saveItem() {
+    toggleOverlay();
+
+    var formContainer = document.getElementById("equipmentFormContainer");
     var form = document.getElementById("equipmentForm");
+    var errorRow = document.getElementById("error");
 
     var values = {
         address: document.getElementById("address").value,
@@ -90,7 +116,6 @@ function saveItem() {
         })
         .then(response => {
             if (!response.ok) {
-                var errorRow = document.getElementById("error");
                 var errorMsg = document.getElementById("errorMessage");
 
                 errorRow.removeAttribute("hidden");
@@ -107,10 +132,13 @@ function saveItem() {
                     }
                 });
             } else {
-                form.style.display = "none";
+                form.reset();
+                errorRow.setAttribute("hidden", "");
+                formContainer.style.display = "none";
             }
         })
-        .then(() => loadEquipment());
+        .then(() => loadEquipment())
+        .then(() => toggleOverlay());
 
     return false;
 }

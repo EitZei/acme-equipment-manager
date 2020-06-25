@@ -9,57 +9,79 @@
 <body onload="startApplication()">
 <h1>ACME Equipment manager</h1>
 
-<button onclick="clearDb()">Clear DB</button>
-<button onclick="generateTestData()">Generate test data</button>
-<button onclick="addItem()">Add item</button>
+<div id="overlay" style="display: none">
+    <h1>Loading...</h1>
+</div>
 
-<form id="equipmentForm" onsubmit="event.preventDefault(); saveItem()" style="display: none">
+<p>
+    <em>Source codes and documentation can be found from <a href="https://github.com/EitZei/acme-equipment-manager">GitHub</a></em>
+</p>
+
+<p>
+    <em><a href="/swagger/swagger.yml">OpenAPI 3.0 specification</a> of the REST API.</em>
+</p>
+
+<div>
+    <button onclick="clearDb()">Clear DB</button>
+    <button onclick="generateTestData()">Generate test data</button>
+    <button onclick="addItem()">Add item</button>
+</div>
+
+<div id="equipmentFormContainer" style="display: none">
+    <form id="equipmentForm" onsubmit="event.preventDefault(); saveItem()">
+        <table>
+            <tr>
+                <th>Address</th>
+                <td><input id="address" name="address"></td>
+            </tr>
+            <tr>
+                <th>Contract start</th>
+                <td><input id="contractStartTime" name="contractStartTime" type="date"></td>
+            </tr>
+            <tr>
+                <th>Contract end</th>
+                <td><input id="contractEndTime" name="contractEndTime" type="date"></td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>
+                    <select id="status" name="status">
+                        <option value="RUNNING">RUNNING</option>
+                        <option value="STOPPED">STOPPED</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                    <button type="submit">Save equipment</button>
+                </td>
+            </tr>
+            <tr hidden id="error">
+                <th>Error</th>
+                <td id="errorMessage">
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div>
+    Show <input id="itemsToShow" onchange="itemsToShowChanged()" value="100"/> items on the list.
+</div>
+
+<div>
     <table>
-        <tr>
-            <th>Address</th>
-            <td><input id="address" name="address"></td>
-        </tr>
-        <tr>
-            <th>Contract start</th>
-            <td><input id="contractStartTime" name="contractStartTime" type="date"></td>
-        </tr>
-        <tr>
-            <th>Contract end</th>
-            <td><input id="contractEndTime" name="contractEndTime" type="date"></td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>
-                <select id="status" name="status">
-                    <option value="RUNNING">RUNNING</option>
-                    <option value="STOPPED">STOPPED</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th></th>
-            <td>
-                <button type="submit">Save equipment</button>
-            </td>
-        </tr>
-        <tr hidden id="error">
-            <th>Error</th>
-            <td id="errorMessage">
-
-            </td>
-        </tr>
+        <thead>
+        <th>ID</th>
+        <th>Address</th>
+        <th>Contract start</th>
+        <th>Contract End</th>
+        <th>Contract Status</th>
+        </thead>
+        <tbody id="equipments"></tbody>
     </table>
-</form>
-
-<table>
-    <thead>
-    <th>ID</th>
-    <th>Address</th>
-    <th>Contract start</th>
-    <th>Contract End</th>
-    <th>Contract Status</th>
-    </thead>
-    <tbody id="equipments"></tbody>
-</table>
+</div>
 </body>
 </html>

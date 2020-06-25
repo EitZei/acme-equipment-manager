@@ -11,3 +11,8 @@ out/
 .project
 .settings
 .classpath
+.mvn
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

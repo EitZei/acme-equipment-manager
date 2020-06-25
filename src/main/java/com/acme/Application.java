@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.info.License;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Equipment manager",
+                title = "ACME Equipment manager",
                 version = "1.0.0",
                 description = "Code test example",
                 license = @License(name = "MIT", url = "https://foo.bar"),
-                contact = @Contact(name = "Antti Järvinen", email = "ext-antti.jarivnen@futurice.com")
+                contact = @Contact(name = "Antti Järvinen", email = "ext-antti.jarvinen@futurice.com")
         )
 )
 public class Application {

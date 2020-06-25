@@ -2,7 +2,9 @@ package com.acme.repository;
 
 import com.acme.model.EStatus;
 import com.acme.model.Equipment;
+import com.acme.model.data.EquipmentData;
 import com.google.common.collect.Maps;
+import io.micronaut.context.annotation.Requires;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Singleton
+@Requires(notEnv = "test")
 public class EquipmentRepository implements IEquipmentRepository {
     public static final String TABLE_NAME = "Equipment";
     public static final String KEY_ID = "Id";
@@ -61,19 +64,21 @@ public class EquipmentRepository implements IEquipmentRepository {
     }
 
     @Override
-    public Single<Equipment> create(Equipment equipment) {
+    public Single<Equipment> create(EquipmentData equipment) {
         return Single.just(equipment)
+                .map(Equipment::fromData)
+                .flatMap(this::validateUniqueness)
                 .map(this::equipmentToMap)
                 .flatMap(item ->
                         Single.fromFuture(
                                 this.dynamoDb.putItem(PutItemRequest.builder()
                                         .tableName(TABLE_NAME)
                                         .item(item)
+                                        .conditionExpression("attribute_not_exists(Id)")
                                         .build()
                                 )
-                        )
-                )
-                .map($ -> equipment);
+                        ).map($ -> mapToEquipment(item))
+                );
     }
 
     @Override
@@ -112,6 +117,24 @@ public class EquipmentRepository implements IEquipmentRepository {
         return equipment;
     }
 
+    private Single<Equipment> validateUniqueness(Equipment equipment) {
+        return Single.fromFuture(
+                this.dynamoDb.scan(
+                        ScanRequest.builder()
+                                .tableName(TABLE_NAME)
+                                .filterExpression("#address = :address")
+                                .expressionAttributeNames(Collections.singletonMap("#address", KEY_ADDRESS))
+                                .expressionAttributeValues(Collections.singletonMap(":address", AttributeValue.builder().s(equipment.getAddress()).build()))
+                                .build()
+                )
+        ).map(scanResponse -> {
+            if (!scanResponse.items().isEmpty()) {
+                throw new NonUniqueItemException("Address is required to be unique.");
+            }
+
+            return equipment;
+        });
+    }
 
     private Equipment mapToEquipment(Map<String, AttributeValue> values) {
         Equipment equipment = new Equipment();
