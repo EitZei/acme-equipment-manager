@@ -1,8 +1,12 @@
-# Running and deploying
+# Development
 
 The application is written in Java and dependencies are managed using Maven.
 
 The application needs AWS environment with DynamoDB configured.
+
+## IDE
+
+Prerequisites: IntelliJ IDEA or other IDE, Java, Maven.
 
 ## Docker
 
@@ -18,11 +22,7 @@ Prerequisites: Java (>= 11) and Maven.
 1. `mvn package`
 2. `java -jar target/equipmentmanager-1.0.0.jar`
 
-## IDE
-
-Prerequisites: IntelliJ IDEA or other IDE, Java, Maven.
-
-1. Run `com.acme.Application`
+3. Run `com.acme.Application`
 
 # System architecture
 
@@ -30,11 +30,11 @@ Prerequisites: IntelliJ IDEA or other IDE, Java, Maven.
 
 The system composes of ACME Equipment manager backend application, the frontend application and AWS Dynamo DB database.
 
-The application servers the static files of frontend application, exposes the REST API to manage the equipment and interacts with the database to persist the data.
+The backend application servers the static files of frontend application, exposes the REST API to manage the equipment and interacts with the database to persist the data.
 
 ## Discussion
 
-Not much decisions went into designing the system itself. The client-server-database -architecture was more or less dicatated by the requirements. The DynamoDB was selected as the NoSQL database based on some previous experiences with it although it could be argued that it is not best suited for this kind of workload.
+Not much decisions went into designing the system level architecture. The client-server-database -architecture was more or less dictated by the requirements. The DynamoDB was selected as the NoSQL database based on some previous experiences with it although it could be argued that it is not best suited for this kind of workload.
 
 # Application architecture
 
@@ -53,9 +53,9 @@ The application is composed using the following structure:
 
 I have for while wanted try out the Micronaut framework and this exercise provided a good possibility to do that. Micronaut is created by [Graeme Rocher](https://twitter.com/graemerocher) who has long history with JVM web frameworks. I've previously used [Grails](https://grails.org) also created by him and the promises that the Micronaut makes e.g. about performance were quite promising.
 
-Although I only scratched the surface of the framework with this exercise it seemed that its _convention over configuration_ choices mapped well with my expectations.
+Although I only scratched the surface of the framework with this exercise it seemed that its _convention over configuration_ choices mapped well with my expectations. Separation of concerns was easy to implement with the standard IoC-system and HTTP layer worked with the reactive return values out-of-the-box.
 
-This was my first time using reactive programming pattern implementing REST APIs. Although it would be best fit for more stream-like data it was also fit to to implement basic CRUD operations.
+This was my first time using reactive programming techniques to implement REST API. Although it would be best fit for more stream-like data it was also a good fit to implement basic CRUD operations. It would be interesting to build more streaming kind of API with reactive techniques applying all the advanced techniques like backpressure.
 
 # Hosting
 
@@ -71,7 +71,7 @@ API is designed following the principles of [RESTFul APIs](https://en.wikipedia.
 
 Endpoints are created for resource _Equipment_ using the standard HTTP verbs `GET`, `POST` and `DELETE` to list equipment, get single equipment and to create equipment. I also implemented two extra endpoints to clear up the database and generate test data for the purposes of this demo.
 
-The API is documented using [OpenAPI 3.0](https://swagger.io/specification/) specification. The API specification is served from URL `/swagger/swagger.yml`.
+The API is documented using [OpenAPI 3.0](https://swagger.io/specification/) specification. The API specification is served from URL `/swagger/acme-equipment-manager-1.0.0.yml`.
 
 ## Discussion
 
